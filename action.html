@@ -1,0 +1,153 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="img/St22.jpg">
+    <title>Тестирование сайтов и мобильных приложений</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RT0XZ3ZSMP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-RT0XZ3ZSMP');
+</script>
+</head>
+
+<body>
+    <header>
+        <a href="https://paveln7581508.github.io/webstudio.github.io/testsr.html"><img src="img/St21p.png" alt="photo"></a>
+        <div>
+
+        </div>
+        <div>
+            <button type="button"><a href="testsr.html" style="font-size: 12px;">RUS</a></button>
+            <button type="button"><a href="testsr_en.html" style="font-size: 12px;">EN</a></button>
+        </div>
+
+        <div>
+            <a href="mailto: hat7581508@gmail.com"> hat7581508@gmail.com</a>
+        </div>
+    </header>
+
+    <main>
+        <style>
+
+        input[type="file"] {
+            margin-bottom: 15px;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #f4b642;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #FC7C07;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            white-space: pre-wrap;
+            font-family: Consolas, monospace;
+            min-height: 100px;
+        }
+    </style>
+<body>
+
+    <h2>Check file(code)</h2>
+
+    <input type="file" id="fileInput" accept=".txt,.js,.py,.html,.css,.json">
+
+    <br>
+    <button onclick="processFile()">Check file(code)</button>
+
+    <div id="result">Result...</div>
+
+    <script>
+        function processFile() {
+            const fileInput = document.getElementById('fileInput');
+            const resultDiv = document.getElementById('result');
+
+            // Проверяем, выбран ли файл
+            if (!fileInput.files.length) {
+                resultDiv.textContent = "Error:no file!";
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            // Когда файл прочитан
+            reader.onload = function(e) {
+                const content = e.target.result;
+
+                // ===== ДЕЙСТВИЕ С ФАЙЛОМ =====
+                const lines = content.split('\n');
+                const totalLines = lines.length;
+                const nonEmptyLines = lines.filter(line => line.trim() !== '').length;
+                const characters = content.length;
+                const words = content.trim() ? content.trim().split(/\s+/).length : 0;
+
+                // Формируем результат
+                let report = `File: ${file.name}\n`;
+                report += `Size: ${(file.size / 1024).toFixed(2)} КБ\n\n`;
+                report += `=== Result ===\n`;
+                report += `Total Lines: ${totalLines}\n`;
+                report += `Non Empty Lines: ${nonEmptyLines}\n`;
+                report += `Words: ${words}\n`;
+                report += `Characters: ${characters}\n\n`;
+                report += `--- First 10 lines file ---\n`;
+                report += lines.slice(0, 10).join('\n');
+
+                // Выводим результат на экран
+                resultDiv.textContent = report;
+            };
+
+            // Читаем файл как текст
+            reader.readAsText(file);
+        }
+    </script>
+
+</body>
+
+    </main>
+    <p></p>
+
+    <h1>in development...</h1>
+
+    <main>
+
+
+
+    </main>
+
+    <footer>
+        Тестирование сайтов и мобильных приложений
+        <a class="fancybox" rel="gallery" href=""><img src="img/St22.png" alt="photo"></a>
+        <img src="img/QR.png" alt="photo">
+        <div>
+            <br>
+            <a href="mailto: hat7581508@gmail.com"> hat7581508@gmail.com</a>
+        </div>
+    </footer>
+</body>
+
+</html>
+
+html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Работа с файлом</title>
+
