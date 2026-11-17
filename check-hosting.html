@@ -1,0 +1,268 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="img/St22.jpg">
+    <title>Тестирование сайтов и мобильных приложений</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RT0XZ3ZSMP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-RT0XZ3ZSMP');
+</script>
+</head>
+
+<body>
+    <header>
+        <a href="https://paveln7581508.github.io/webstudio.github.io/testsr.html"><img src="img/St21p.png" alt="photo"></a>
+        <div>
+
+        </div>
+        <div>
+            <button type="button"><a href="testsr.html" style="font-size: 12px;">RUS</a></button>
+            <button type="button"><a href="testsr_en.html" style="font-size: 12px;">EN</a></button>
+        </div>
+
+        <div>
+            <a href="mailto: hat7581508@gmail.com"> hat7581508@gmail.com</a>
+        </div>
+    </header>
+
+    <main>
+        <style>
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input {
+            flex: 1;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+        }
+        input:focus {
+            border-color: #4a90e2;
+        }
+        button {
+            padding: 12px 22px;
+            font-size: 16px;
+            background: #f4b642;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #FC7C07;
+        }
+        button:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+        #result {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            display: none;
+        }
+        .row {
+            display: flex;
+            margin: 10px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .row:last-child {
+            border-bottom: none;
+        }
+        .label {
+            width: 160px;
+            font-weight: 600;
+            color: #555;
+        }
+        .value {
+            flex: 1;
+            word-break: break-all;
+        }
+        .error {
+            color: #d32f2f;
+            text-align: center;
+            padding: 15px;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+    </style>
+<body>
+ <h1>Check hosting website</h1>
+
+    <div class="input-group">
+        <input type="text" id="siteInput" placeholder="Ex: google.com" value="">
+        <button id="checkBtn" onclick="checkHosting()">Check</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        // Очистка домена
+        function cleanDomain(url) {
+            url = url.trim().toLowerCase();
+            url = url.replace(/^(https?:\/\/)?(www\.)?/, '');
+            url = url.split('/')[0];
+            return url;
+        }
+
+        // Получение A-записи (IP) через Google DNS
+        async function getIP(domain) {
+            const res = await fetch(`https://dns.google/resolve?name=${domain}&type=A`);
+            const data = await res.json();
+            if (data.Answer && data.Answer.length > 0) {
+                // Берём первую A-запись
+                const aRecord = data.Answer.find(r => r.type === 1);
+                return aRecord ? aRecord.data : null;
+            }
+            return null;
+        }
+
+        // Получение Nameservers
+        async function getNameservers(domain) {
+            try {
+                const res = await fetch(`https://dns.google/resolve?name=${domain}&type=NS`);
+                const data = await res.json();
+                if (data.Answer) {
+                    return data.Answer
+                        .filter(r => r.type === 2)
+                        .map(r => r.data.replace(/\.$/, ''));
+                }
+            } catch (e) {}
+            return [];
+        }
+
+        // Информация о IP (хостинг, страна и т.д.)
+        async function getIpInfo(ip) {
+            // Используем ipapi.co — хорошо работает с CORS
+            const res = await fetch(`https://ipapi.co/${ip}/json/`);
+            return await res.json();
+        }
+
+        async function checkHosting() {
+            const input = document.getElementById('siteInput');
+            const btn = document.getElementById('checkBtn');
+            const resultDiv = document.getElementById('result');
+
+            const domain = cleanDomain(input.value);
+            if (!domain) {
+                alert('Write name website');
+                return;
+            }
+
+            btn.disabled = true;
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div class="loading">⏳ Checikng...</div>';
+
+            try {
+                // 1. Получаем IP
+                const ip = await getIP(domain);
+                if (!ip) {
+                    throw new Error('Error IP-address. Write name website correctly.');
+                }
+
+                // 2. Nameservers и информация об IP параллельно
+                const [nameservers, info] = await Promise.all([
+                    getNameservers(domain),
+                    getIpInfo(ip)
+                ]);
+
+                if (info.error) {
+                    throw new Error(info.reason || 'Error info about hosting');
+                }
+
+                // Выводим результат
+                resultDiv.innerHTML = `
+                    <div class="row">
+                        <div class="label">Domain:</div>
+                        <div class="value">${domain}</div>
+                    </div>
+                    <div class="row">
+                        <div class="label">IP-address:</div>
+                        <div class="value">${ip}</div>
+                    </div>
+                    <div class="row">
+                        <div class="label">Nameservers:</div>
+                        <div class="value">${nameservers.length ? nameservers.join('<br>') : '—'}</div>
+                    </div>
+                    <div class="row">
+                        <div class="label">Provider / ISP:</div>
+                        <div class="value">${info.org || info.asn || '—'}</div>
+                    </div>
+                    <div class="row">
+                        <div class="label">ASN:</div>
+                        <div class="value">${info.asn || '—'}</div>
+                    </div>
+                    <div class="row">
+                        <div class="label">Country:</div>
+                        <div class="value">${info.country_name || '—'} ${info.country_code ? '(' + info.country_code + ')' : ''}</div>
+                    </div>
+                    <div class="row">
+                        <div class="label">City:</div>
+                        <div class="value">${info.city || '—'}</div>
+                    </div>
+                    <div class="row">
+                        <div class="label">Region:</div>
+                        <div class="value">${info.region || '—'}</div>
+                    </div>
+                `;
+            } catch (err) {
+                resultDiv.innerHTML = `<div class="error">❌ ${err.message}</div>`;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // Запуск по Enter
+        document.getElementById('siteInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkHosting();
+        });
+    </script>
+
+
+</body>
+
+    </main>
+    <p></p>
+
+    <h1>in development...</h1>
+
+    <main>
+
+
+
+    </main>
+
+    <footer>
+        Тестирование сайтов и мобильных приложений
+        <a class="fancybox" rel="gallery" href=""><img src="img/St22.png" alt="photo"></a>
+        <img src="img/QR.png" alt="photo">
+        <div>
+            <br>
+            <a href="mailto: hat7581508@gmail.com"> hat7581508@gmail.com</a>
+        </div>
+    </footer>
+</body>
+
+</html>
