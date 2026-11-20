@@ -1,0 +1,519 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="img/St22.jpg">
+    <title>Тестирование сайтов и мобильных приложений</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RT0XZ3ZSMP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-RT0XZ3ZSMP');
+</script>
+<script async src="https://www.googletagmanager.com/gtm.js?id=GTM-PP9C5DXZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+</script>
+
+</head>
+
+<body>
+    <header>
+        <a href="https://paveln7581508.github.io/webstudio.github.io/testsr.html"><img src="img/St21p.png" alt="photo"></a>
+        <div>
+
+        </div>
+        <div>
+            <button type="button"><a href="testsr.html" style="font-size: 12px;">RUS</a></button>
+            <button type="button"><a href="testsr_en.html" style="font-size: 12px;">EN</a></button>
+        </div>
+
+        <div>
+            <a href="mailto: hat7581508@gmail.com"> hat7581508@gmail.com</a>
+        </div>
+    </header>
+
+    <main>
+        <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        header h1 { font-size: 1.5rem; margin-bottom: 6px; }
+        header p { opacity: 0.9; font-size: 0.95rem; }
+        .content { padding: 30px; }
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 14px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+        }
+        .btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 0 28px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn:hover { background: #1d4ed8; }
+        .btn:disabled {
+            background: #93c5fd;
+            cursor: not-allowed;
+        }
+        .status {
+            margin: 16px 0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .status.loading { background: #eff6ff; color: #1e40af; display: block; }
+        .status.error { background: #fef2f2; color: #b91c1c; display: block; }
+        .status.success { background: #f0fdf4; color: #166534; display: block; }
+        #result { margin-top: 24px; }
+        .result-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .cms-name {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 6px;
+        }
+        .confidence {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .match-item {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            font-family: monospace;
+            font-size: 13px;
+            word-break: break-all;
+        }
+        .fallback {
+            margin-top: 30px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 24px;
+        }
+        .fallback h3 { margin-bottom: 12px; font-size: 1.1rem; }
+        textarea {
+            width: 100%;
+            height: 160px;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 13px;
+            margin-bottom: 12px;
+            resize: vertical;
+        }
+        .tips {
+            margin-top: 24px;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 10px;
+            padding: 16px;
+            font-size: 0.9rem;
+            color: #78350f;
+        }
+    </style>
+<body>
+    <div class="container">
+
+            <h1>Checking CMS site</h1><br>
+
+        <div class="content">
+            <div class="input-group">
+                <input type="text" id="siteUrl" placeholder="example.com или https://example.com"
+                       onkeydown="if(event.key==='Enter') detectByUrl()">
+                <button class="btn" id="detectBtn" onclick="detectByUrl()">Check</button>
+            </div>
+
+            <div id="status" class="status"></div>
+            <div id="result"></div>
+
+            <!-- Запасной вариант -->
+            <div class="fallback">
+                <h3>If automatic detection did not work</h3>
+                <p style="margin-bottom:12px;color:#4b5563;">
+                    Open the website → press <b>Ctrl+U</b> → copy all the code and paste it here:
+                </p>
+                <textarea id="htmlSource" placeholder="Insert the page source code..."></textarea>
+                <button class="btn" onclick="detectFromSource()">Analyze code</button>
+            </div>
+
+
+        </div>
+    </div>
+
+    <script>
+        // ========== База сигнатур CMS ==========
+        const cmsSignatures = [
+            {
+                name: "WordPress",
+                patterns: [
+                    { type: "path", value: "/wp-content/" },
+                    { type: "path", value: "/wp-includes/" },
+                    { type: "path", value: "wp-json" },
+                    { type: "meta", value: /wordpress/i },
+                    { type: "text", value: "wp-block-" },
+                    { type: "text", value: "wp-emoji" }
+                ]
+            },
+            {
+                name: "1С-Битрикс",
+                patterns: [
+                    { type: "path", value: "/bitrix/" },
+                    { type: "path", value: "/upload/iblock/" },
+                    { type: "text", value: "IN." },
+                    { type: "text", value: "bitrix/js" },
+                    { type: "meta", value: /bitrix/i }
+                ]
+            },
+            {
+                name: "Joomla",
+                patterns: [
+                    { type: "path", value: "/media/system/js/" },
+                    { type: "path", value: "/media/jui/" },
+                    { type: "path", value: "option=com_" },
+                    { type: "meta", value: /joomla/i }
+                ]
+            },
+            {
+                name: "Drupal",
+                patterns: [
+                    { type: "path", value: "/sites/default/files/" },
+                    { type: "path", value: "/sites/all/" },
+                    { type: "text", value: "Drupal.settings" },
+                    { type: "text", value: "drupal-settings-json" },
+                    { type: "meta", value: /drupal/i }
+                ]
+            },
+            {
+                name: "Tilda",
+                patterns: [
+                    { type: "path", value: "tildacdn.com" },
+                    { type: "path", value: "static.tildacdn.com" },
+                    { type: "text", value: "t-rec" },
+                    { type: "text", value: "tilda" }
+                ]
+            },
+            {
+                name: "OpenCart",
+                patterns: [
+                    { type: "path", value: "/catalog/view/theme/" },
+                    { type: "path", value: "index.php?route=" },
+                    { type: "text", value: "opencart" }
+                ]
+            },
+            {
+                name: "Shopify",
+                patterns: [
+                    { type: "path", value: "cdn.shopify.com" },
+                    { type: "path", value: "/cdn/shop/" },
+                    { type: "text", value: "Shopify.theme" }
+                ]
+            },
+            {
+                name: "Wix",
+                patterns: [
+                    { type: "path", value: "static.wixstatic.com" },
+                    { type: "path", value: "parastorage.com" },
+                    { type: "text", value: "wix-thunderbolt" },
+                    { type: "meta", value: /wix/i }
+                ]
+            },
+            {
+                name: "Squarespace",
+                patterns: [
+                    { type: "path", value: "static.squarespace.com" },
+                    { type: "path", value: "static1.squarespace.com" },
+                    { type: "text", value: "SQUARESPACE_CONTEXT" }
+                ]
+            },
+            {
+                name: "Webflow",
+                patterns: [
+                    { type: "path", value: "website-files.com" },
+                    { type: "path", value: "assets.website-files.com" },
+                    { type: "text", value: "data-wf-page" },
+                    { type: "text", value: "data-wf-site" }
+                ]
+            },
+            {
+                name: "Magento",
+                patterns: [
+                    { type: "path", value: "/static/frontend/" },
+                    { type: "path", value: "/static/version" },
+                    { type: "text", value: "Magento_" }
+                ]
+            },
+            {
+                name: "MODX",
+                patterns: [
+                    { type: "path", value: "/assets/components/" },
+                    { type: "text", value: "modx" },
+                    { type: "meta", value: /modx/i }
+                ]
+            },
+            {
+                name: "PrestaShop",
+                patterns: [
+                    { type: "path", value: "/modules/" },
+                    { type: "text", value: "prestashop" },
+                    { type: "meta", value: /prestashop/i }
+                ]
+            },
+            {
+                name: "Ghost",
+                patterns: [
+                    { type: "path", value: "/content/images/" },
+                    { type: "meta", value: /ghost/i }
+                ]
+            }
+        ];
+
+        // ========== Прокси для обхода CORS ==========
+        const proxies = [
+            url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+            url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+            url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+            url => `https://proxy.cors.dev/${url}`
+        ];
+
+        function normalizeUrl(input) {
+            let url = input.trim();
+            if (!url) return null;
+            if (!/^https?:\/\//i.test(url)) {
+                url = 'https://' + url;
+            }
+            try {
+                new URL(url);
+                return url;
+            } catch {
+                return null;
+            }
+        }
+
+        async function fetchWithProxies(targetUrl) {
+            for (let i = 0; i < proxies.length; i++) {
+                const proxyUrl = proxies[i](targetUrl);
+                try {
+                    const controller = new AbortController();
+                    const timeout = setTimeout(() => controller.abort(), 10000); // 10 сек
+
+                    const response = await fetch(proxyUrl, { signal: controller.signal });
+                    clearTimeout(timeout);
+
+                    if (!response.ok) continue;
+
+                    let html = await response.text();
+
+                    // allorigins /get возвращает JSON
+                    if (proxyUrl.includes('allorigins.win/get')) {
+                        try {
+                            const json = JSON.parse(html);
+                            html = json.contents || '';
+                        } catch {}
+                    }
+
+                    if (html && html.length > 300) {
+                        return html;
+                    }
+                } catch (e) {
+                    console.warn(`Proxy ${i + 1} not work:`, e.message);
+                }
+            }
+            return null;
+        }
+
+        async function detectByUrl() {
+            const input = document.getElementById('siteUrl').value;
+            const url = normalizeUrl(input);
+            const statusEl = document.getElementById('status');
+            const resultEl = document.getElementById('result');
+            const btn = document.getElementById('detectBtn');
+
+            if (!url) {
+                statusEl.className = 'status error';
+                statusEl.textContent = 'Enter a valid website address';
+                return;
+            }
+
+            btn.disabled = true;
+            statusEl.className = 'status loading';
+            statusEl.textContent = 'Loading the page via a proxy...';
+            resultEl.innerHTML = '';
+
+            const html = await fetchWithProxies(url);
+
+            btn.disabled = false;
+
+            if (!html) {
+                statusEl.className = 'status error';
+                statusEl.innerHTML = `
+                    Failed to load the site automatically.<br>
+                    The site is likely blocking proxies. Please use the manual code insertion method below.
+                `;
+                return;
+            }
+
+            statusEl.className = 'status success';
+            statusEl.textContent = 'The page has loaded successfully. Analyzing ....';
+
+            analyzeHTML(html);
+        }
+
+        function detectFromSource() {
+            const html = document.getElementById('htmlSource').value.trim();
+            if (!html) {
+                alert('Insert the page source code');
+                return;
+            }
+            document.getElementById('status').className = 'status success';
+            document.getElementById('status').textContent = 'Analyzing the inserted code...';
+            analyzeHTML(html);
+        }
+
+        function analyzeHTML(html) {
+            const lowerHtml = html.toLowerCase();
+            const found = [];
+
+            cmsSignatures.forEach(cms => {
+                const matches = [];
+
+                cms.patterns.forEach(pattern => {
+                    if (pattern.type === "path" || pattern.type === "text") {
+                        if (lowerHtml.includes(pattern.value.toLowerCase())) {
+                            matches.push(pattern.value);
+                        }
+                    } else if (pattern.type === "meta") {
+                        const genMatch = html.match(/<meta[^>]*name=["']generator["'][^>]*content=["']([^"']+)["']/i);
+                        if (genMatch && pattern.value.test(genMatch[1])) {
+                            matches.push(`generator: ${genMatch[1]}`);
+                        }
+                        if (pattern.value.test(html)) {
+                            matches.push(pattern.value.toString());
+                        }
+                    }
+                });
+
+                if (matches.length > 0) {
+                    found.push({
+                        name: cms.name,
+                        matches: [...new Set(matches)],
+                        score: matches.length
+                    });
+                }
+            });
+
+            found.sort((a, b) => b.score - a.score);
+            showResults(found);
+        }
+
+        function showResults(found) {
+            const resultEl = document.getElementById('result');
+
+            if (found.length === 0) {
+                resultEl.innerHTML = `
+                    <div class="result-card">
+                        <h3>CMS not defined</h3>
+                        <p style="color:#6b7280;margin-top:8px;">
+                            No characteristic signs found. This could be a custom-built site,
+                            a headless CMS, or the signs may have been intentionally hidden.
+                        </p>
+                    </div>`;
+                return;
+            }
+
+            let html = '';
+            found.forEach((item, index) => {
+                const confidence = item.score >= 3 ? 'High' : item.score === 2 ? 'Average' : 'Low';
+                html += `
+                    <div class="result-card">
+                        <div class="cms-name">${index === 0 ? '🏆 ' : ''}${item.name}</div>
+                        <div class="confidence">Confidence: ${confidence} (${item.score} coincidence.)</div>
+                        <div>
+                            <strong style="font-size:0.9rem;color:#4b5563;">Identified features:</strong>
+                            ${item.matches.map(m => `<div class="match-item">${escapeHtml(m)}</div>`).join('')}
+                        </div>
+                    </div>`;
+            });
+
+            resultEl.innerHTML = html;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+
+    </main>
+    <p></p>
+
+    <h1>in development...</h1>
+
+    <main>
+
+
+
+    </main>
+
+    <footer>
+        Тестирование сайтов и мобильных приложений
+        <a class="fancybox" rel="gallery" href=""><img src="img/St22.png" alt="photo"></a>
+        <img src="img/QR.png" alt="photo">
+        <div>
+            <br>
+            <a href="mailto: hat7581508@gmail.com"> hat7581508@gmail.com</a>
+        </div>
+    </footer>
+</body>
+
+</html>
+
