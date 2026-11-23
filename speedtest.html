@@ -1,0 +1,369 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="img/St22.jpg">
+    <title>Тестирование сайтов и мобильных приложений</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RT0XZ3ZSMP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-RT0XZ3ZSMP');
+</script>
+<script async src="https://www.googletagmanager.com/gtm.js?id=GTM-PP9C5DXZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+</script>
+
+</head>
+
+<body>
+    <header>
+        <a href="https://paveln7581508.github.io/webstudio.github.io/testsr.html"><img src="img/St21p.png" alt="photo"></a>
+        <div>
+
+        </div>
+        <div>
+            <button type="button"><a href="testsr.html" style="font-size: 12px;">RUS</a></button>
+            <button type="button"><a href="testsr_en.html" style="font-size: 12px;">EN</a></button>
+        </div>
+
+        <div>
+            <a href="mailto: hat7581508@gmail.com"> hat7581508@gmail.com</a>
+        </div>
+    </header>
+
+    <main>
+         <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 32px;
+            font-size: 0.95rem;
+        }
+
+        .results {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .result-card {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            padding: 20px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .result-card.full {
+            grid-column: 1 / -1;
+        }
+
+        .label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #f4b642;
+        }
+
+        .unit {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-left: 4px;
+        }
+
+        #status {
+            min-height: 28px;
+            margin-bottom: 24px;
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 28px;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f4b642, #f4b642);
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.4);
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(14, 165, 233, 0.5);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .note {
+            margin-top: 24px;
+            font-size: 0.8rem;
+            color: #64748b;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 28px 20px;
+            }
+            .value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+<body>
+    <div class="container">
+        <h1>Internet speed test</h1>
+        <h1 class="subtitle">Testing via Cloudflare Edge</h1>
+
+        <div class="results">
+            <div class="result-card">
+                <div class="label">Download</div>
+                <div class="value" id="download">—</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Upload</div>
+                <div class="value" id="upload">—</div>
+            </div>
+            <div class="result-card full">
+                <div class="label">Ping</div>
+                <div class="value" id="ping">—</div>
+            </div>
+        </div>
+
+        <div id="status">Press the button to start the test</div>
+
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <button id="startBtn">Start test</button>
+
+        <h1 class="note">
+            The results are approximate.<br>
+            For maximum accuracy, close other tabs and programs that are using the internet.
+        </h1>
+    </div>
+
+    <script>
+        const CF_DOWN = 'https://speed.cloudflare.com/__down?bytes=';
+        const CF_UP = 'https://speed.cloudflare.com/__up';
+
+        const startBtn = document.getElementById('startBtn');
+        const statusEl = document.getElementById('status');
+        const downloadEl = document.getElementById('download');
+        const uploadEl = document.getElementById('upload');
+        const pingEl = document.getElementById('ping');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+
+        function setProgress(percent) {
+            progressFill.style.width = percent + '%';
+        }
+
+        function formatSpeed(mbps) {
+            if (mbps === null || isNaN(mbps)) return '—';
+            return mbps.toFixed(1) + ' <span class="unit">Мбит/с</span>';
+        }
+
+        // ===== Пинг =====
+        async function measurePing() {
+            statusEl.textContent = 'Testing ping...';
+            const times = [];
+
+            for (let i = 0; i < 5; i++) {
+                const start = performance.now();
+                await fetch(CF_DOWN + '0&tid=' + Math.random(), { cache: 'no-store' });
+                times.push(performance.now() - start);
+            }
+
+            // Берём медиану
+            times.sort((a, b) => a - b);
+            return times[Math.floor(times.length / 2)];
+        }
+
+        // ===== Скачивание =====
+        async function measureDownload() {
+            statusEl.textContent = 'Testing download speed...';
+            setProgress(10);
+
+            // Несколько запросов разного размера для точности
+            const sizes = [5_000_000, 10_000_000, 15_000_000]; // ~30 МБ суммарно
+            let totalBytes = 0;
+            const start = performance.now();
+
+            for (let i = 0; i < sizes.length; i++) {
+                const size = sizes[i];
+                const url = CF_DOWN + size + '&tid=' + Math.random();
+                const response = await fetch(url, { cache: 'no-store' });
+                if (!response.ok) throw new Error('Download error');
+
+                const reader = response.body.getReader();
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    totalBytes += value.length;
+                }
+
+                setProgress(10 + (i + 1) * 25);
+            }
+
+            const duration = (performance.now() - start) / 1000; // секунды
+            const mbps = (totalBytes * 8) / (duration * 1_000_000);
+            return mbps;
+        }
+
+        // ===== Загрузка =====
+        async function measureUpload() {
+            statusEl.textContent = 'Testing loading speed...';
+            setProgress(80);
+
+            const size = 8_000_000; // 8 МБ
+            // Генерируем данные с небольшой случайностью (против сжатия)
+            const data = new Uint8Array(size);
+            for (let i = 0; i < size; i += 4096) {
+                data[i] = Math.floor(Math.random() * 256);
+            }
+
+            const start = performance.now();
+            const response = await fetch(CF_UP, {
+                method: 'POST',
+                body: data,
+                headers: { 'Content-Type': 'application/octet-stream' }
+            });
+
+            if (!response.ok) throw new Error('Loading error');
+
+            const duration = (performance.now() - start) / 1000;
+            const mbps = (size * 8) / (duration * 1_000_000);
+            return mbps;
+        }
+
+        // ===== Основной тест =====
+        async function runTest() {
+            startBtn.disabled = true;
+            progressBar.style.display = 'block';
+            setProgress(0);
+
+            downloadEl.innerHTML = '—';
+            uploadEl.innerHTML = '—';
+            pingEl.innerHTML = '—';
+
+            try {
+                // 1. Пинг
+                const ping = await measurePing();
+                pingEl.innerHTML = Math.round(ping) + ' <span class="unit">мс</span>';
+                setProgress(5);
+
+                // 2. Скачивание
+                const downloadSpeed = await measureDownload();
+                downloadEl.innerHTML = formatSpeed(downloadSpeed);
+
+                // 3. Загрузка
+                const uploadSpeed = await measureUpload();
+                uploadEl.innerHTML = formatSpeed(uploadSpeed);
+
+                setProgress(100);
+                statusEl.textContent = 'Test complete!';
+            } catch (err) {
+                console.error(err);
+                statusEl.textContent = 'Error: ' + err.message;
+            } finally {
+                startBtn.disabled = false;
+                setTimeout(() => {
+                    progressBar.style.display = 'none';
+                    setProgress(0);
+                }, 1500);
+            }
+        }
+
+        startBtn.addEventListener('click', runTest);
+    </script>
+</body>
+
+    </main>
+    <p></p>
+
+<h1>in development...</h1>
+
+    <main>
+
+
+
+    </main>
+
+    <footer>
+        Тестирование сайтов и мобильных приложений
+        <a class="fancybox" rel="gallery" href=""><img src="img/St22.png" alt="photo"></a>
+        <img src="img/QR.png" alt="photo">
+        <div>
+            <br>
+            <a href="mailto: hat7581508@gmail.com"> hat7581508@gmail.com</a>
+        </div>
+    </footer>
+</body>
+
+</html>
