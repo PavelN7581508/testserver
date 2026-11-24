@@ -1,0 +1,481 @@
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Tester</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #3b82f6;
+      --success: #22c55e;
+      --error: #ef4444;
+      --warning: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 20px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
+    input, select, textarea {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      margin-bottom: 14px;
+    }
+    textarea { min-height: 100px; font-family: ui-monospace, monospace; resize: vertical; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .row > * { flex: 1; min-width: 140px; }
+    .headers-list { margin-bottom: 10px; }
+    .header-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+    .header-row input { margin-bottom: 0; }
+    .btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    .btn:hover { filter: brightness(1.1); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary { background: #475569; }
+    .btn-danger { background: var(--error); }
+    .btn-success { background: var(--success); }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+    pre {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .status {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .status.ok { background: rgba(34,197,94,0.2); color: var(--success); }
+    .status.err { background: rgba(239,68,68,0.2); color: var(--error); }
+    .status.warn { background: rgba(245,158,11,0.2); color: var(--warning); }
+    .meta { color: var(--muted); font-size: 0.9rem; margin-bottom: 12px; }
+    .tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+    .tab {
+      padding: 8px 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .tab.active { background: var(--accent); color: white; border-color: var(--accent); }
+    .hidden { display: none; }
+    .load-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-value { font-size: 1.4rem; font-weight: 700; }
+    .stat-label { font-size: 0.8rem; color: var(--muted); }
+    .note {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 16px;
+      padding: 12px;
+      background: rgba(59,130,246,0.1);
+      border-radius: 6px;
+      border-left: 3px solid var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <h1>API Tester</h1>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>Метод</label>
+        <select id="method">
+          <option>GET</option>
+          <option>POST</option>
+          <option>PUT</option>
+          <option>PATCH</option>
+          <option>DELETE</option>
+          <option>HEAD</option>
+          <option>OPTIONS</option>
+        </select>
+      </div>
+      <div style="flex: 3;">
+        <label>URL</label>
+        <input type="url" id="url" placeholder="https://api.example.com/v1/endpoint" value="">
+      </div>
+    </div>
+
+    <label>Авторизация</label>
+    <div class="row">
+      <div>
+        <select id="authType">
+          <option value="none">Нет</option>
+          <option value="bearer">Bearer Token</option>
+          <option value="basic">Basic Auth</option>
+          <option value="apikey">API Key (Header)</option>
+          <option value="custom">Custom Header</option>
+        </select>
+      </div>
+      <div id="authValueWrap" style="flex: 2;">
+        <input type="text" id="authValue" placeholder="токен / ключ / login:password">
+      </div>
+      <div id="authHeaderNameWrap" class="hidden">
+        <input type="text" id="authHeaderName" placeholder="Имя заголовка (X-API-Key)" value="X-API-Key">
+      </div>
+    </div>
+
+    <label>Заголовки (Headers)</label>
+    <div class="headers-list" id="headersList"></div>
+    <button type="button" class="btn btn-secondary" onclick="addHeaderRow()">+ Добавить заголовок</button>
+
+    <label style="margin-top: 16px;">Тело запроса (JSON)</label>
+    <textarea id="body" placeholder='{"key": "value"}'></textarea>
+
+    <div class="actions">
+      <button class="btn" id="sendBtn" onclick="sendRequest()">Отправить запрос</button>
+      <button class="btn btn-secondary" onclick="clearResults()">Очистить</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom: 14px;">Нагрузочное тестирование</h3>
+    <div class="row">
+      <div>
+        <label>Количество запросов</label>
+        <input type="number" id="loadCount" value="10" min="1" max="500">
+      </div>
+      <div>
+        <label>Параллельность (одновременно)</label>
+        <input type="number" id="loadConcurrency" value="5" min="1" max="50">
+      </div>
+      <div>
+        <label>Задержка между батчами (мс)</label>
+        <input type="number" id="loadDelay" value="0" min="0">
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-success" id="loadBtn" onclick="runLoadTest()">Запустить нагрузку</button>
+      <button class="btn btn-danger" id="stopBtn" onclick="stopLoadTest()" disabled>Остановить</button>
+    </div>
+  </div>
+
+  <div class="card" id="resultsCard">
+    <div class="tabs">
+      <button class="tab active" data-tab="single" onclick="switchTab('single')">Одиночный запрос</button>
+      <button class="tab" data-tab="load" onclick="switchTab('load')">Нагрузка</button>
+    </div>
+
+    <div id="singleResults">
+      <div id="statusBadge"></div>
+      <div class="meta" id="metaInfo"></div>
+      <label>Заголовки ответа</label>
+      <pre id="responseHeaders">—</pre>
+      <label style="margin-top: 12px;">Тело ответа</label>
+      <pre id="responseBody">—</pre>
+    </div>
+
+    <div id="loadResults" class="hidden">
+      <div class="load-stats" id="loadStats"></div>
+      <label>Лог</label>
+      <pre id="loadLog">—</pre>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Важно:</strong> Браузерные CORS-ограничения могут блокировать запросы к чужим доменам.
+    Для тестирования API без CORS используйте расширение браузера (CORS Unblock) или прокси.
+    Инструмент работает полностью на клиенте.
+  </div>
+
+<script>
+  let abortController = null;
+  let loadRunning = false;
+
+  // ——— Headers UI ———
+  function addHeaderRow(key = '', value = '') {
+    const list = document.getElementById('headersList');
+    const row = document.createElement('div');
+    row.className = 'header-row';
+    row.innerHTML = `
+      <input type="text" placeholder="Имя (Content-Type)" value="${key}" class="h-key">
+      <input type="text" placeholder="Значение" value="${value}" class="h-value">
+      <button type="button" class="btn btn-danger" style="padding:8px 12px" onclick="this.parentElement.remove()">×</button>
+    `;
+    list.appendChild(row);
+  }
+
+  // Начальные заголовки
+  addHeaderRow('Content-Type', 'application/json');
+  addHeaderRow('Accept', 'application/json');
+
+  // Auth type change
+  document.getElementById('authType').addEventListener('change', (e) => {
+    const type = e.target.value;
+    document.getElementById('authValueWrap').classList.toggle('hidden', type === 'none');
+    document.getElementById('authHeaderNameWrap').classList.toggle('hidden', type !== 'apikey' && type !== 'custom');
+  });
+
+  function getHeaders() {
+    const headers = {};
+    document.querySelectorAll('.header-row').forEach(row => {
+      const key = row.querySelector('.h-key').value.trim();
+      const val = row.querySelector('.h-value').value.trim();
+      if (key) headers[key] = val;
+    });
+
+    const authType = document.getElementById('authType').value;
+    const authValue = document.getElementById('authValue').value.trim();
+
+    if (authType === 'bearer' && authValue) {
+      headers['Authorization'] = `Bearer ${authValue}`;
+    } else if (authType === 'basic' && authValue) {
+      headers['Authorization'] = `Basic ${btoa(authValue)}`;
+    } else if ((authType === 'apikey' || authType === 'custom') && authValue) {
+      const name = document.getElementById('authHeaderName').value.trim() || 'X-API-Key';
+      headers[name] = authValue;
+    }
+
+    return headers;
+  }
+
+  function getBody() {
+    const method = document.getElementById('method').value;
+    if (['GET', 'HEAD'].includes(method)) return undefined;
+    const raw = document.getElementById('body').value.trim();
+    return raw || undefined;
+  }
+
+  // ——— Single request ———
+  async function sendRequest() {
+    const url = document.getElementById('url').value.trim();
+    if (!url) {
+      alert('Укажите URL');
+      return;
+    }
+
+    const method = document.getElementById('method').value;
+    const headers = getHeaders();
+    const body = getBody();
+
+    const btn = document.getElementById('sendBtn');
+    btn.disabled = true;
+    btn.textContent = 'Отправка...';
+
+    const start = performance.now();
+    try {
+      const options = { method, headers };
+      if (body !== undefined) options.body = body;
+
+      const res = await fetch(url, options);
+      const time = Math.round(performance.now() - start);
+
+      // Headers
+      const resHeaders = {};
+      res.headers.forEach((v, k) => resHeaders[k] = v);
+
+      let text = '';
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        try {
+          const json = await res.json();
+          text = JSON.stringify(json, null, 2);
+        } catch {
+          text = await res.text();
+        }
+      } else {
+        text = await res.text();
+      }
+
+      showSingleResult(res.status, res.statusText, time, resHeaders, text, res.ok);
+    } catch (err) {
+      const time = Math.round(performance.now() - start);
+      showSingleResult(0, 'Network Error', time, {}, err.message, false);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Отправить запрос';
+      switchTab('single');
+    }
+  }
+
+  function showSingleResult(status, statusText, time, headers, body, ok) {
+    const badge = document.getElementById('statusBadge');
+    badge.innerHTML = `<span class="status ${ok ? 'ok' : (status === 0 ? 'err' : 'warn')}">${status} ${statusText}</span>`;
+    document.getElementById('metaInfo').textContent = `Время: ${time} мс`;
+    document.getElementById('responseHeaders').textContent = Object.keys(headers).length
+      ? Object.entries(headers).map(([k, v]) => `${k}: ${v}`).join('\n')
+      : '—';
+    document.getElementById('responseBody').textContent = body || '—';
+  }
+
+  function clearResults() {
+    document.getElementById('statusBadge').innerHTML = '';
+    document.getElementById('metaInfo').textContent = '';
+    document.getElementById('responseHeaders').textContent = '—';
+    document.getElementById('responseBody').textContent = '—';
+    document.getElementById('loadStats').innerHTML = '';
+    document.getElementById('loadLog').textContent = '—';
+  }
+
+  // ——— Load test ———
+  async function runLoadTest() {
+    const url = document.getElementById('url').value.trim();
+    if (!url) {
+      alert('Укажите URL');
+      return;
+    }
+
+    const total = Math.min(500, Math.max(1, +document.getElementById('loadCount').value || 10));
+    const concurrency = Math.min(50, Math.max(1, +document.getElementById('loadConcurrency').value || 5));
+    const delay = Math.max(0, +document.getElementById('loadDelay').value || 0);
+
+    const method = document.getElementById('method').value;
+    const headers = getHeaders();
+    const body = getBody();
+
+    loadRunning = true;
+    document.getElementById('loadBtn').disabled = true;
+    document.getElementById('stopBtn').disabled = false;
+    abortController = new AbortController();
+
+    const results = [];
+    const log = [];
+    let completed = 0;
+    const startAll = performance.now();
+
+    switchTab('load');
+    updateLoadStats(results, 0, total);
+
+    async function oneRequest(i) {
+      if (!loadRunning) return;
+      const start = performance.now();
+      try {
+        const options = {
+          method,
+          headers,
+          signal: abortController.signal
+        };
+        if (body !== undefined) options.body = body;
+
+        const res = await fetch(url, options);
+        const time = Math.round(performance.now() - start);
+        const ok = res.ok;
+        results.push({ ok, status: res.status, time });
+        log.push(`[${i + 1}] ${res.status} — ${time} мс`);
+      } catch (err) {
+        const time = Math.round(performance.now() - start);
+        const isAbort = err.name === 'AbortError';
+        results.push({ ok: false, status: 0, time, aborted: isAbort });
+        log.push(`[${i + 1}] ${isAbort ? 'Остановлен' : 'Ошибка: ' + err.message} — ${time} мс`);
+      }
+      completed++;
+      updateLoadStats(results, completed, total);
+      document.getElementById('loadLog').textContent = log.slice(-100).join('\n');
+    }
+
+    // Батчи
+    for (let i = 0; i < total && loadRunning; i += concurrency) {
+      const batch = [];
+      for (let j = 0; j < concurrency && i + j < total; j++) {
+        batch.push(oneRequest(i + j));
+      }
+      await Promise.all(batch);
+      if (delay > 0 && i + concurrency < total && loadRunning) {
+        await new Promise(r => setTimeout(r, delay));
+      }
+    }
+
+    const totalTime = Math.round(performance.now() - startAll);
+    updateLoadStats(results, completed, total, totalTime);
+    finishLoad();
+  }
+
+  function updateLoadStats(results, completed, total, totalTime) {
+    const success = results.filter(r => r.ok).length;
+    const fail = results.filter(r => !r.ok && !r.aborted).length;
+    const times = results.map(r => r.time).filter(t => t > 0);
+    const avg = times.length ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : 0;
+    const min = times.length ? Math.min(...times) : 0;
+    const max = times.length ? Math.max(...times) : 0;
+    const rps = totalTime && completed ? (completed / (totalTime / 1000)).toFixed(1) : '—';
+
+    document.getElementById('loadStats').innerHTML = `
+      <div class="stat"><div class="stat-value">${completed}/${total}</div><div class="stat-label">Выполнено</div></div>
+      <div class="stat"><div class="stat-value" style="color:var(--success)">${success}</div><div class="stat-label">Успешно</div></div>
+      <div class="stat"><div class="stat-value" style="color:var(--error)">${fail}</div><div class="stat-label">Ошибки</div></div>
+      <div class="stat"><div class="stat-value">${avg} мс</div><div class="stat-label">Среднее время</div></div>
+      <div class="stat"><div class="stat-value">${min} / ${max}</div><div class="stat-label">Мин / Макс</div></div>
+      <div class="stat"><div class="stat-value">${rps}</div><div class="stat-label">RPS</div></div>
+    `;
+  }
+
+  function stopLoadTest() {
+    loadRunning = false;
+    if (abortController) abortController.abort();
+    finishLoad();
+  }
+
+  function finishLoad() {
+    loadRunning = false;
+    document.getElementById('loadBtn').disabled = false;
+    document.getElementById('stopBtn').disabled = true;
+  }
+
+  // Tabs
+  function switchTab(name) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    document.getElementById('singleResults').classList.toggle('hidden', name !== 'single');
+    document.getElementById('loadResults').classList.toggle('hidden', name !== 'load');
+  }
+</script>
+</body>
+</html>
